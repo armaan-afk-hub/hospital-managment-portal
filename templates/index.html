@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MediCare Hospital - Your Health, Our Priority{% endblock %}
+
+{% block content %}
+<!-- Section 2: Hero Section -->
+<section class="hero-section d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <!-- Left Column: Hero Text and Actions -->
+            <div class="col-lg-6">
+                <div class="pe-lg-3">
+                    <span class="badge-trust mb-3">
+                        <i class="bi bi-shield-check me-1"></i> Trusted Healthcare Excellence
+                    </span>
+                    <h1 class="hero-title">
+                        Your Health, <br><span style="color: var(--medical-teal);">Our Priority</span>
+                    </h1>
+                    <p class="hero-desc">
+                        Book appointments with trusted doctors and manage your healthcare with ease.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'appointments' %}" class="btn btn-teal btn-lg px-4 shadow-sm">
+                                <i class="bi bi-calendar-plus me-2"></i> Book Appointment
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-teal btn-lg px-4 shadow-sm">
+                                <i class="bi bi-calendar-plus me-2"></i> Book Appointment
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'doctors' %}" class="btn btn-outline-teal btn-lg px-4">
+                            <i class="bi bi-people me-2"></i> Explore Doctors
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Hero Image (Uploaded Doctor Team Image) -->
+            <div class="col-lg-6">
+                <div class="hero-img-container">
+                    <img src="{% static 'images/hero.jpg' %}" alt="MediCare Doctor Medical Team" class="hero-img img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

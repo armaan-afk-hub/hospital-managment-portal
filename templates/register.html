@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Registration - MediCare Hospital{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="medicare-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle p-3 mb-2 border">
+                        <i class="bi bi-person-plus fs-2" style="color: var(--medical-teal);"></i>
+                    </div>
+                    <h2 class="h4 mb-1">Create Account</h2>
+                    <p class="text-secondary small">Register as a new patient at MediCare</p>
+                </div>
+
+                <form method="POST" action="{% url 'register' %}" id="registerForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-secondary"></i></span>
+                            {{ form.username }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-secondary"></i></span>
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-secondary"></i></span>
+                            {{ form.password }}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_confirm_password" class="form-label">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-lock text-secondary"></i></span>
+                            {{ form.confirm_password }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-teal w-100 py-2 mb-3">
+                        <i class="bi bi-check2-circle me-1"></i> Register Now
+                    </button>
+                </form>
+
+                <div class="text-center pt-2 border-top">
+                    <p class="text-secondary small mb-0">
+                        Already have an account? <a href="{% url 'login' %}" class="fw-semibold text-decoration-none" style="color: var(--medical-teal);">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

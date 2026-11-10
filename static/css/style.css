@@ -1,0 +1,448 @@
+/* Google Font - Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-navy: #12304A;
+    --medical-teal: #1F9D94;
+    --teal-hover: #18837B;
+    --bg-light: #F5F8FA;
+    --card-bg: #FFFFFF;
+    --text-primary: #243746;
+    --text-secondary: #64748B;
+    --border-color: #E3EAF0;
+    --status-success: #16A085;
+    --status-warning: #E9A23B;
+    --status-error: #DC5353;
+    --border-radius: 12px;
+    --card-shadow: 0 4px 16px rgba(18, 48, 74, 0.06);
+}
+
+/* Color Utilities & Contrast Fixes */
+.text-teal {
+    color: var(--medical-teal) !important;
+}
+
+.text-navy {
+    color: var(--primary-navy) !important;
+}
+
+.bg-teal {
+    background-color: var(--medical-teal) !important;
+    color: #FFFFFF !important;
+}
+
+.bg-teal-subtle {
+    background-color: rgba(31, 157, 148, 0.12) !important;
+    color: var(--medical-teal) !important;
+}
+
+.bg-navy {
+    background-color: var(--primary-navy) !important;
+    color: #FFFFFF !important;
+}
+
+/* Fix Bootstrap 5 default white text override on badges */
+.badge.text-teal {
+    color: var(--medical-teal) !important;
+    --bs-badge-color: var(--medical-teal) !important;
+}
+
+.badge.text-dark {
+    color: var(--text-primary) !important;
+    --bs-badge-color: var(--text-primary) !important;
+}
+
+.badge.text-secondary {
+    color: var(--text-secondary) !important;
+    --bs-badge-color: var(--text-secondary) !important;
+}
+
+/* Dedicated High-Contrast Pill Badges */
+.badge-specialization {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: rgba(31, 157, 148, 0.12) !important;
+    color: var(--medical-teal) !important;
+    border: 1px solid rgba(31, 157, 148, 0.28) !important;
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.badge-specialization i {
+    color: var(--medical-teal) !important;
+    font-size: 0.9rem;
+}
+
+.badge-trust {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(31, 157, 148, 0.1) !important;
+    color: var(--medical-teal) !important;
+    border: 1px solid rgba(31, 157, 148, 0.25) !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+}
+
+.user-profile-badge {
+    background-color: #F8FAFC !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 20px;
+    padding: 0.4rem 0.9rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: var(--text-primary);
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: var(--primary-navy);
+}
+
+label, .form-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+/* Navbar */
+.medicare-navbar {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(18, 48, 74, 0.04);
+    padding: 0.85rem 0;
+}
+
+.medicare-navbar .navbar-brand {
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: var(--primary-navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.medicare-navbar .navbar-brand i {
+    color: var(--medical-teal);
+    font-size: 1.5rem;
+}
+
+.medicare-navbar .nav-link {
+    font-weight: 500;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.medicare-navbar .nav-link:hover,
+.medicare-navbar .nav-link.active {
+    color: var(--medical-teal);
+    background-color: rgba(31, 157, 148, 0.08);
+}
+
+/* Buttons */
+.btn-teal {
+    background-color: var(--medical-teal);
+    color: #FFFFFF;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.4rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-teal:hover, .btn-teal:focus {
+    background-color: var(--teal-hover);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(31, 157, 148, 0.25);
+}
+
+.btn-navy {
+    background-color: var(--primary-navy);
+    color: #FFFFFF;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.4rem;
+    transition: background-color 0.2s ease;
+}
+
+.btn-navy:hover {
+    background-color: #0b1f31;
+    color: #FFFFFF;
+}
+
+.btn-outline-teal {
+    border: 1.5px solid var(--medical-teal);
+    color: var(--medical-teal);
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 0.55rem 1.3rem;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-teal:hover {
+    background-color: var(--medical-teal);
+    color: #FFFFFF;
+}
+
+/* Cards */
+.medicare-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.medicare-card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(18, 48, 74, 0.08);
+}
+
+/* Stat Cards */
+.stat-card {
+    background-color: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1.4rem;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.stat-icon.navy {
+    background-color: rgba(18, 48, 74, 0.1);
+    color: var(--primary-navy);
+}
+
+.stat-icon.teal {
+    background-color: rgba(31, 157, 148, 0.12);
+    color: var(--medical-teal);
+}
+
+.stat-icon.warning {
+    background-color: rgba(233, 162, 59, 0.15);
+    color: var(--status-warning);
+}
+
+.stat-icon.success {
+    background-color: rgba(22, 160, 133, 0.15);
+    color: var(--status-success);
+}
+
+.stat-number {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--primary-navy);
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 4.5rem 0;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hero-title {
+    font-size: 2.85rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--primary-navy);
+    margin-bottom: 1.2rem;
+}
+
+.hero-desc {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-img-container {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 36px rgba(18, 48, 74, 0.12);
+    border: 4px solid #FFFFFF;
+}
+
+.hero-img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Sidebar for Dashboard & Authenticated Pages */
+.sidebar-container {
+    background-color: var(--primary-navy);
+    min-height: calc(100vh - 72px);
+    padding: 1.5rem 1rem;
+    color: #FFFFFF;
+}
+
+.sidebar-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8da4b8;
+    margin-bottom: 0.8rem;
+    padding-left: 0.75rem;
+}
+
+.sidebar-nav .nav-link {
+    color: #d1dde6;
+    font-weight: 500;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 0.35rem;
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav .nav-link i {
+    font-size: 1.2rem;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+    color: #FFFFFF;
+    background-color: rgba(31, 157, 148, 0.25);
+    border-left: 4px solid var(--medical-teal);
+}
+
+/* Tables */
+.table-medicare {
+    background: #FFFFFF;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.table-medicare th {
+    background-color: #F8FAFC;
+    color: var(--primary-navy);
+    font-weight: 600;
+    font-size: 0.88rem;
+    border-bottom: 2px solid var(--border-color);
+    padding: 1rem 1.1rem;
+}
+
+.table-medicare td {
+    padding: 1rem 1.1rem;
+    color: var(--text-primary);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Status Badges */
+.badge-status {
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.badge-pending {
+    background-color: rgba(233, 162, 59, 0.15) !important;
+    color: var(--status-warning) !important;
+    border: 1px solid rgba(233, 162, 59, 0.3) !important;
+}
+
+.badge-confirmed {
+    background-color: rgba(22, 160, 133, 0.15) !important;
+    color: var(--status-success) !important;
+    border: 1px solid rgba(22, 160, 133, 0.3) !important;
+}
+
+.badge-cancelled {
+    background-color: rgba(220, 83, 83, 0.15) !important;
+    color: var(--status-error) !important;
+    border: 1px solid rgba(220, 83, 83, 0.3) !important;
+}
+
+/* Forms */
+.form-control, .form-select {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.65rem 0.95rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background-color: #FFFFFF;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--medical-teal);
+    box-shadow: 0 0 0 3px rgba(31, 157, 148, 0.15);
+    outline: none;
+}
+
+/* Footer */
+.medicare-footer {
+    background-color: #FFFFFF;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 1.8rem 0;
+    margin-top: auto;
+}
+
+.medicare-footer p {
+    margin: 0;
+    font-size: 0.92rem;
+}
+

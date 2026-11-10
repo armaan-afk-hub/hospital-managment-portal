@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Appointments - MediCare Hospital{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="h3 mb-1">
+                {% if is_admin %}All Hospital Appointments{% else %}My Appointments{% endif %}
+            </h2>
+            <p class="text-secondary small mb-0">
+                {% if is_admin %}
+                    Manage and review patient bookings, confirm pending visits, or cancel appointments.
+                {% else %}
+                    Schedule doctor consultations and track the status of your bookings.
+                {% endif %}
+            </p>
+        </div>
+
+        {% if not is_admin %}
+            <button class="btn btn-teal" type="button" data-bs-toggle="collapse" data-bs-target="#bookAppointmentCollapse" aria-expanded="true" aria-controls="bookAppointmentCollapse">
+                <i class="bi bi-calendar-plus me-1"></i> Book New Appointment
+            </button>
+        {% endif %}
+    </div>
+
+    <!-- Booking Form for Patients -->
+    {% if not is_admin %}
+    <div class="collapse show mb-4" id="bookAppointmentCollapse">
+        <div class="medicare-card">
+            <h5 class="mb-3 text-dark"><i class="bi bi-calendar2-heart text-teal me-2"></i>Book a Consultation</h5>
+            <form method="POST" action="{% url 'book_appointment' %}" id="appointmentBookingForm">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="id_doctor" class="form-label">Select Doctor</label>
+                        {{ form.doctor }}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="appointment_date" class="form-label">Appointment Date</label>
+                        {{ form.appointment_date }}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="appointment_time" class="form-label">Appointment Time</label>
+                        {{ form.appointment_time }}
+                    </div>
+                    <div class="col-12 text-end pt-2">
+                        <button type="submit" class="btn btn-teal px-4">
+                            <i class="bi bi-check2-circle me-1"></i> Confirm & Book Appointment
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Appointments Table -->
+    <div class="medicare-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+                <i class="bi bi-list-check text-teal me-2"></i>
+                {% if is_admin %}Appointment Records{% else %}Booking History{% endif %}
+            </h5>
+            <span class="badge bg-light text-secondary border px-3 py-2">
+                Total: {{ appointments.count }}
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-medicare align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        {% if is_admin %}
+                            <th>Patient</th>
+                        {% endif %}
+                        <th>Doctor</th>
+                        <th>Specialization</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments %}
+                    <tr>
+                        <td><strong>#{{ appt.id }}</strong></td>
+                        {% if is_admin %}
+                            <td>
+                                <i class="bi bi-person text-secondary me-1"></i>
+                                <strong>{{ appt.patient.username }}</strong>
+                                <br><small class="text-muted">{{ appt.patient.email }}</small>
+                            </td>
+                        {% endif %}
+                        <td><strong>{{ appt.doctor.name }}</strong></td>
+                        <td><span class="badge-specialization">{{ appt.doctor.specialization }}</span></td>
+                        <td>{{ appt.appointment_date|date:"d M, Y" }}</td>
+                        <td>{{ appt.appointment_time|time:"H:i" }}</td>
+                        <td>
+                            {% if appt.status == 'Pending' %}
+                                <span class="badge-status badge-pending"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                            {% elif appt.status == 'Confirmed' %}
+                                <span class="badge-status badge-confirmed"><i class="bi bi-check-circle me-1"></i>Confirmed</span>
+                            {% else %}
+                                <span class="badge-status badge-cancelled"><i class="bi bi-x-circle me-1"></i>Cancelled</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if is_admin %}
+                                <!-- Admin Actions: Confirm or Cancel -->
+                                <div class="d-inline-flex gap-1">
+                                    {% if appt.status == 'Pending' %}
+                                        <form method="POST" action="{% url 'confirm_appointment' appt.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Confirm Appointment">
+                                                <i class="bi bi-check-lg me-1"></i> Confirm
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                    {% if appt.status != 'Cancelled' %}
+                                        <form method="POST" action="{% url 'cancel_appointment' appt.id %}" class="d-inline" onsubmit="return confirmCancellation(event);">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancel Appointment">
+                                                <i class="bi bi-x-lg me-1"></i> Cancel
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <!-- Patient Actions: Cancel own appointment -->
+                                {% if appt.status != 'Cancelled' %}
+                                    <form method="POST" action="{% url 'cancel_appointment' appt.id %}" class="d-inline" onsubmit="return confirmCancellation(event);">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-x-circle me-1"></i> Cancel
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted small">No actions available</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if is_admin %}8{% else %}7{% endif %}" class="text-center py-5 text-secondary">
+                            <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                            <p class="mb-0">No appointments found.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - MediCare Hospital{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Navy Blue Sidebar -->
+        <aside class="col-lg-2 col-md-3 p-0 sidebar-container d-none d-md-block">
+            <div class="px-3 py-2 mb-3 border-bottom border-secondary border-opacity-25">
+                <span class="sidebar-title">
+                    {% if is_admin %}ADMIN PANEL{% else %}PATIENT PORTAL{% endif %}
+                </span>
+            </div>
+            <ul class="nav flex-column sidebar-nav px-2">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'dashboard' %}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'doctors' %}">
+                        <i class="bi bi-person-badge"></i> Doctors
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'appointments' %}">
+                        <i class="bi bi-calendar2-check"></i> Appointments
+                    </a>
+                </li>
+                {% if is_admin %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/" target="_blank">
+                        <i class="bi bi-sliders"></i> Django Admin
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item mt-4 pt-3 border-top border-secondary border-opacity-25">
+                    <a class="nav-link text-danger" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="col-lg-10 col-md-9 ms-sm-auto px-md-4 py-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 mb-4 border-bottom">
+                <div>
+                    <h2 class="h3 mb-1">
+                        {% if is_admin %}Administrator Dashboard{% else %}Patient Dashboard{% endif %}
+                    </h2>
+                    <p class="text-secondary small mb-0">Welcome back, <strong>{{ user.username }}</strong>! Here is an overview of system activities.</p>
+                </div>
+                <div class="btn-toolbar mb-2 mb-md-0 gap-2">
+                    {% if not is_admin %}
+                        <a href="{% url 'appointments' %}" class="btn btn-teal">
+                            <i class="bi bi-calendar-plus me-1"></i> Book New Appointment
+                        </a>
+                    {% else %}
+                        <a href="{% url 'doctors' %}" class="btn btn-navy">
+                            <i class="bi bi-person-plus me-1"></i> Manage Doctors
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if is_admin %}
+                <!-- Admin Statistics Cards (ORM Count Queries) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <div class="stat-number">{{ total_doctors }}</div>
+                                <div class="stat-label">Total Doctors</div>
+                            </div>
+                            <div class="stat-icon teal">
+                                <i class="bi bi-person-badge"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <div class="stat-number">{{ total_patients }}</div>
+                                <div class="stat-label">Total Patients</div>
+                            </div>
+                            <div class="stat-icon navy">
+                                <i class="bi bi-people"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <div class="stat-number">{{ total_appointments }}</div>
+                                <div class="stat-label">Total Appointments</div>
+                            </div>
+                            <div class="stat-icon success">
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <div class="stat-number">{{ pending_appointments }}</div>
+                                <div class="stat-label">Pending Review</div>
+                            </div>
+                            <div class="stat-icon warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Appointments Table (Admin) -->
+                <div class="medicare-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-clock-history text-teal me-2"></i>Recent Appointments</h5>
+                        <a href="{% url 'appointments' %}" class="btn btn-sm btn-outline-teal">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-medicare align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appt in recent_appointments %}
+                                <tr>
+                                    <td><strong>#{{ appt.id }}</strong></td>
+                                    <td><i class="bi bi-person text-secondary me-1"></i>{{ appt.patient.username }}</td>
+                                    <td>{{ appt.doctor.name }} ({{ appt.doctor.specialization }})</td>
+                                    <td>{{ appt.appointment_date|date:"d M, Y" }}</td>
+                                    <td>{{ appt.appointment_time|time:"H:i" }}</td>
+                                    <td>
+                                        {% if appt.status == 'Pending' %}
+                                            <span class="badge-status badge-pending">Pending</span>
+                                        {% elif appt.status == 'Confirmed' %}
+                                            <span class="badge-status badge-confirmed">Confirmed</span>
+                                        {% else %}
+                                            <span class="badge-status badge-cancelled">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'appointments' %}" class="btn btn-sm btn-outline-secondary">Manage</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-secondary">
+                                        <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
+                                        No appointments recorded yet.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            {% else %}
+                <!-- Patient Statistics Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-4">
+                        <div class="stat-card">
+                            <div>
+                                <div class="stat-number">{{ total_my_appointments }}</div>
+                                <div class="stat-label">My Total Bookings</div>
+                            </div>
+                            <div class="stat-icon teal">
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="stat-card">
+                            <div>
+                                <div class="stat-number">{{ pending_my_appointments }}</div>
+                                <div class="stat-label">Pending Appointments</div>
+                            </div>
+                            <div class="stat-icon warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="stat-card">
+                            <div>
+                                <div class="stat-number">{{ confirmed_my_appointments }}</div>
+                                <div class="stat-label">Confirmed Appointments</div>
+                            </div>
+                            <div class="stat-icon success">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Recent Appointments -->
+                <div class="medicare-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-journal-medical text-teal me-2"></i>My Recent Appointments</h5>
+                        <a href="{% url 'appointments' %}" class="btn btn-sm btn-teal">
+                            <i class="bi bi-plus-lg me-1"></i> Book New
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-medicare align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Specialization</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appt in recent_appointments %}
+                                <tr>
+                                    <td><strong>{{ appt.doctor.name }}</strong></td>
+                                    <td>{{ appt.doctor.specialization }}</td>
+                                    <td>{{ appt.appointment_date|date:"d M, Y" }}</td>
+                                    <td>{{ appt.appointment_time|time:"H:i" }}</td>
+                                    <td>
+                                        {% if appt.status == 'Pending' %}
+                                            <span class="badge-status badge-pending">Pending</span>
+                                        {% elif appt.status == 'Confirmed' %}
+                                            <span class="badge-status badge-confirmed">Confirmed</span>
+                                        {% else %}
+                                            <span class="badge-status badge-cancelled">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appt.status != 'Cancelled' %}
+                                            <form method="POST" action="{% url 'cancel_appointment' appt.id %}" class="d-inline" onsubmit="return confirmCancellation(event);">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="text-muted small">No action</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-secondary">
+                                        <i class="bi bi-calendar2-plus fs-3 d-block mb-2"></i>
+                                        You have no booked appointments yet. <a href="{% url 'appointments' %}" class="text-decoration-none fw-semibold" style="color: var(--medical-teal);">Book an appointment now</a>.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Featured Doctors Preview -->
+                <div class="medicare-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-people text-teal me-2"></i>Available Doctors</h5>
+                        <a href="{% url 'doctors' %}" class="btn btn-sm btn-outline-teal">View All Doctors</a>
+                    </div>
+                    <div class="row g-3">
+                        {% for doc in doctors %}
+                        <div class="col-md-6 col-lg-3">
+                            <div class="p-3 border rounded-3 bg-light text-center h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="stat-icon teal mx-auto mb-2">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <h6 class="mb-1 text-truncate">{{ doc.name }}</h6>
+                                    <div class="mb-2">
+                                        <span class="badge-specialization">{{ doc.specialization }}</span>
+                                    </div>
+                                    <p class="text-secondary small mb-3"><i class="bi bi-clock me-1"></i>{{ doc.available_days }}</p>
+                                </div>
+                                <a href="{% url 'appointments' %}?doctor={{ doc.id }}" class="btn btn-sm btn-teal w-100">
+                                    <i class="bi bi-calendar-plus me-1"></i> Book
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+

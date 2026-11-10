@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctors - MediCare Hospital{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="h3 mb-1">Our Medical Specialists</h2>
+            <p class="text-secondary small mb-0">Consult with highly qualified and experienced healthcare practitioners.</p>
+        </div>
+
+        {% if user.is_authenticated and user.is_staff %}
+            <button class="btn btn-teal" type="button" data-bs-toggle="collapse" data-bs-target="#addDoctorCollapse" aria-expanded="false" aria-controls="addDoctorCollapse">
+                <i class="bi bi-plus-circle me-1"></i> Add New Doctor
+            </button>
+        {% endif %}
+    </div>
+
+    <!-- Admin: Edit Doctor Form (Visible only when editing) -->
+    {% if edit_doctor and user.is_staff %}
+    <div class="medicare-card mb-4 border-primary">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 text-primary"><i class="bi bi-pencil-square me-2"></i>Edit Doctor: {{ edit_doctor.name }}</h5>
+            <a href="{% url 'doctors' %}" class="btn btn-sm btn-outline-secondary">Cancel</a>
+        </div>
+        <form method="POST" action="{% url 'edit_doctor' edit_doctor.id %}">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Doctor Name</label>
+                    {{ edit_form.name }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Specialization</label>
+                    {{ edit_form.specialization }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Available Days</label>
+                    {{ edit_form.available_days }}
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-teal px-4">
+                        <i class="bi bi-check-lg me-1"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Admin: Add Doctor Collapsible Form -->
+    {% if user.is_authenticated and user.is_staff %}
+    <div class="collapse mb-4" id="addDoctorCollapse">
+        <div class="medicare-card">
+            <h5 class="mb-3 text-dark"><i class="bi bi-person-plus text-teal me-2"></i>Add New Doctor</h5>
+            <form method="POST" action="{% url 'add_doctor' %}">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Doctor Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Specialization</label>
+                        {{ form.specialization }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Available Days</label>
+                        {{ form.available_days }}
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-teal px-4">
+                            <i class="bi bi-plus-lg me-1"></i> Add Doctor
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Doctors Grid / Cards -->
+    <div class="row g-4">
+        {% for doc in doctors %}
+        <div class="col-md-6 col-lg-4">
+            <div class="medicare-card medicare-card-hover h-100 d-flex flex-column justify-content-between p-4">
+                <div>
+                    <!-- Doctor Header -->
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="stat-icon teal flex-shrink-0">
+                            <i class="bi bi-person-badge-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1 fw-bold">{{ doc.name }}</h5>
+                            <span class="badge-specialization">
+                                <i class="bi bi-heart-pulse"></i>{{ doc.specialization }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Available Days -->
+                    <div class="bg-light p-3 rounded-3 mb-3 border">
+                        <div class="d-flex align-items-center text-secondary small mb-1">
+                            <i class="bi bi-calendar3 me-2 text-teal"></i>
+                            <strong>Available Days:</strong>
+                        </div>
+                        <div class="text-dark fw-medium ps-4">
+                            {{ doc.available_days }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-2 border-top">
+                    {% if user.is_authenticated and user.is_staff %}
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'edit_doctor' doc.id %}" class="btn btn-sm btn-outline-teal flex-grow-1">
+                                <i class="bi bi-pencil me-1"></i> Edit
+                            </a>
+                            <form method="POST" action="{% url 'delete_doctor' doc.id %}" class="flex-grow-1" onsubmit="return confirmDeleteDoctor(event, '{{ doc.name }}');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <a href="{% if user.is_authenticated %}{% url 'appointments' %}?doctor={{ doc.id }}{% else %}{% url 'login' %}{% endif %}" class="btn btn-teal w-100">
+                            <i class="bi bi-calendar-check me-1"></i> Book Appointment
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="medicare-card text-center py-5">
+                <i class="bi bi-people text-secondary fs-1 d-block mb-3"></i>
+                <h5>No Doctors Found</h5>
+                <p class="text-secondary small mb-0">No doctors have been registered in the system yet.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
